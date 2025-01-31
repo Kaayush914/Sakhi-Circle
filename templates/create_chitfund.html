@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Chit Fund - Sakhi Circle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Sakhi Circle</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('routes.dashboard') }}">Dashboard</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('routes.logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Create New Chit Fund</h3>
+                    </div>
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <form id="createChitFundForm" method="POST" action="{{ url_for('routes.create_chitfund') }}">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Chit Fund Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="member_count" class="form-label">Number of Members</label>
+                                <input type="number" class="form-control" id="member_count" name="member_count" 
+                                       min="3" max="25" required>
+                                <div class="form-text">Including you (between 3 and 25 members)</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="monthly_contribution" class="form-label">Monthly Contribution (₹)</label>
+                                <input type="number" class="form-control" id="monthly_contribution" 
+                                       name="monthly_contribution" min="100" max="50000" required>
+                                <div class="form-text">Amount between ₹100 and ₹50,000</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="duration" class="form-label">Duration (months)</label>
+                                <input type="number" class="form-control" id="duration" name="duration" 
+                                       min="3" required>
+                                <div class="form-text">Must be a multiple of the number of members</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Add Members</label>
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control" id="memberSearch" 
+                                           placeholder="Search by username or mobile number">
+                                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                                        <i class="bi bi-search"></i> Search
+                                    </button>
+                                </div>
+                                <div id="searchResults" class="list-group mb-2" style="max-height: 200px; overflow-y: auto;">
+                                    <!-- Search results will appear here -->
+                                </div>
+                                <div id="selectedMembers" class="mb-2">
+                                    <!-- Selected members will appear here -->
+                                </div>
+                                <!-- Hidden input for member IDs -->
+                                <input type="hidden" id="member_ids" name="member_ids" value="">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Create Chit Fund</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const memberSearch = document.getElementById('memberSearch');
+        const searchButton = document.getElementById('searchButton');
+        const searchResults = document.getElementById('searchResults');
+        const selectedMembers = document.getElementById('selectedMembers');
+        const memberCountInput = document.getElementById('member_count');
+        const durationInput = document.getElementById('duration');
+        const createForm = document.getElementById('createChitFundForm');
+        const memberIdsInput = document.getElementById('member_ids');
+        
+        // Store selected members
+        const selectedMemberIds = new Set();
+        
+        // Search for members
+        async function searchMembers() {
+            const query = memberSearch.value.trim();
+            if (query.length < 3) {
+                alert('Please enter at least 3 characters to search');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/search-members?query=${encodeURIComponent(query)}`);
+                const users = await response.json();
+                
+                searchResults.innerHTML = '';
+                users.forEach(user => {
+                    if (!selectedMemberIds.has(user.id.toString())) {
+                        const item = document.createElement('a');
+                        item.href = '#';
+                        item.className = 'list-group-item list-group-item-action';
+                        item.innerHTML = `
+                            ${user.full_name} (${user.username})
+                            <br>
+                            <small class="text-muted">Mobile: ${user.mobile_number}</small>
+                        `;
+                        item.onclick = (e) => {
+                            e.preventDefault();
+                            addMember(user);
+                        };
+                        searchResults.appendChild(item);
+                    }
+                });
+                
+                if (users.length === 0) {
+                    searchResults.innerHTML = '<div class="list-group-item">No users found</div>';
+                }
+            } catch (error) {
+                console.error('Error searching members:', error);
+                searchResults.innerHTML = '<div class="list-group-item text-danger">Error searching members</div>';
+            }
+        }
+        
+        // Add a member to the selected list
+        function addMember(user) {
+            const userId = user.id.toString();
+            if (selectedMemberIds.has(userId)) return;
+            
+            const memberCount = parseInt(memberCountInput.value);
+            if (selectedMemberIds.size + 1 >= memberCount) {
+                alert(`Cannot add more members. Maximum allowed is ${memberCount - 1}`);
+                return;
+            }
+            
+            selectedMemberIds.add(userId);
+            updateMemberIdsInput();
+            
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'alert alert-info alert-dismissible fade show';
+            memberDiv.innerHTML = `
+                ${user.full_name} (${user.username})
+                <button type="button" class="btn-close" onclick="removeMember('${userId}', this.parentElement)"></button>
+            `;
+            
+            selectedMembers.appendChild(memberDiv);
+            searchResults.innerHTML = '';
+            memberSearch.value = '';
+        }
+        
+        // Remove a member from the selected list
+        function removeMember(userId, element) {
+            selectedMemberIds.delete(userId);
+            updateMemberIdsInput();
+            element.remove();
+        }
+        
+        // Update hidden input with member IDs
+        function updateMemberIdsInput() {
+            memberIdsInput.value = Array.from(selectedMemberIds).join(',');
+        }
+        
+        // Event listeners
+        searchButton.onclick = searchMembers;
+        memberSearch.onkeyup = (e) => {
+            if (e.key === 'Enter') searchMembers();
+        };
+        
+        // Form validation
+        createForm.onsubmit = (e) => {
+            e.preventDefault();
+            
+            const memberCount = parseInt(memberCountInput.value);
+            const duration = parseInt(durationInput.value);
+            
+            // Validate member count
+            if (selectedMemberIds.size + 1 !== memberCount) {
+                alert(`Please select exactly ${memberCount - 1} members`);
+                return;
+            }
+            
+            // Validate duration
+            if (duration % memberCount !== 0) {
+                alert('Duration must be a multiple of the number of members');
+                return;
+            }
+            
+            // All validations passed, submit the form
+            createForm.submit();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakhi Circle - Women's Chit Fund Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            color: white;
+            padding: 100px 0;
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #FF6B6B;
+            margin-bottom: 1rem;
+        }
+        .feature-card {
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .testimonial {
+            background-color: #f8f9fa;
+            padding: 80px 0;
+        }
+        .testimonial-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .cta-section {
+            background: linear-gradient(135deg, #4ECDC4 0%, #FF6B6B 100%);
+            color: white;
+            padding: 80px 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('routes.index') }}">
+                <i class="bi bi-circle-fill me-2"></i>Sakhi Circle
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('routes.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('routes.register') }}">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4">Welcome to Sakhi Circle</h1>
+            <p class="lead mb-4">A secure and transparent platform for women's chit funds</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ url_for('routes.register') }}" class="btn btn-light btn-lg">Get Started</a>
+                <a href="#features" class="btn btn-outline-light btn-lg">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Why Choose Sakhi Circle?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-shield-check feature-icon"></i>
+                            <h5 class="card-title">Secure & Transparent</h5>
+                            <p class="card-text">All transactions are recorded and visible to members, ensuring complete transparency and security.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-people feature-icon"></i>
+                            <h5 class="card-title">Community Driven</h5>
+                            <p class="card-text">Join a trusted community of women supporting each other's financial goals.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-phone feature-icon"></i>
+                            <h5 class="card-title">Easy to Use</h5>
+                            <p class="card-text">Simple and intuitive interface for managing payments, bids, and tracking funds.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">How It Works</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h1 mb-3 text-primary">1</div>
+                        <h5>Create or Join</h5>
+                        <p>Start your own chit fund or join an existing one</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h1 mb-3 text-primary">2</div>
+                        <h5>Make Payments</h5>
+                        <p>Pay your monthly contributions securely</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h1 mb-3 text-primary">3</div>
+                        <h5>Place Bids</h5>
+                        <p>Participate in monthly bidding rounds</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h1 mb-3 text-primary">4</div>
+                        <h5>Receive Funds</h5>
+                        <p>Winners receive funds based on successful bids</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonial">
+        <div class="container">
+            <h2 class="text-center mb-5">What Our Members Say</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p class="mb-3">"Sakhi Circle made it easy for me to manage our neighborhood chit fund. The transparency and security give us peace of mind."</p>
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h6 class="mb-0">Priya Sharma</h6>
+                                <small class="text-muted">Chit Fund Organizer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p class="mb-3">"The bidding system is fair and the payment tracking helps us stay organized. Highly recommended!"</p>
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h6 class="mb-0">Meera Patel</h6>
+                                <small class="text-muted">Active Member</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p class="mb-3">"Thanks to Sakhi Circle, I was able to start my small business. The platform is user-friendly and reliable."</p>
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h6 class="mb-0">Anjali Gupta</h6>
+                                <small class="text-muted">Business Owner</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container text-center">
+            <h2 class="mb-4">Ready to Start Your Financial Journey?</h2>
+            <p class="lead mb-4">Join Sakhi Circle today and experience the power of community savings.</p>
+            <a href="{{ url_for('routes.register') }}" class="btn btn-light btn-lg">Register Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Sakhi Circle</h5>
+                    <p>Empowering women through community-based financial solutions.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#features" class="text-light">Features</a></li>
+                        <li><a href="{{ url_for('routes.login') }}" class="text-light">Login</a></li>
+                        <li><a href="{{ url_for('routes.register') }}" class="text-light">Register</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-envelope me-2"></i>support@sakhicircle.com</li>
+                        <li><i class="bi bi-phone me-2"></i>+91 1234567890</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 Sakhi Circle. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
