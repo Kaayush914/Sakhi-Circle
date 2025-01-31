@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn - Financial Education</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --hover-color: #0b5ed7;
+            --light-bg: #f8f9fa;
+            --card1-color: #4CAF50;
+            --card2-color: #2196F3;
+            --card3-color: #FF9800;
+            --section1-bg: #E8F5E9;
+            --section2-bg: #E3F2FD;
+            --section3-bg: #FFF3E0;
+        }
+
+        section:nth-child(1) {
+            background-color: var(--section1-bg);
+            padding: 40px 0;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        section:nth-child(2) {
+            background-color: var(--section2-bg);
+            padding: 40px 0;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        section:nth-child(3) {
+            background-color: var(--section3-bg);
+            padding: 40px 0;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .topic-card {
+            height: 100%;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            background: white;
+        }
+
+        .topic-card:nth-child(1) .card-body {
+            border-top: 5px solid var(--card1-color);
+        }
+
+        .topic-card:nth-child(2) .card-body {
+            border-top: 5px solid var(--card2-color);
+        }
+
+        .topic-card:nth-child(3) .card-body {
+            border-top: 5px solid var(--card3-color);
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .key-points {
+            background-color: var(--light-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .key-points ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .key-points ul li {
+            padding: 8px 0;
+            color: #555;
+        }
+
+        .scheme-card {
+            border: none;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            background: white;
+            overflow: visible;
+        }
+
+        .scheme-card:nth-child(1) .scheme-header {
+            background: var(--card1-color);
+        }
+
+        .scheme-card:nth-child(2) .scheme-header {
+            background: var(--card2-color);
+        }
+
+        .scheme-card:nth-child(3) .scheme-header {
+            background: var(--card3-color);
+        }
+
+        .scheme-header {
+            background: var(--primary-color);
+            padding: 15px 25px;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .scheme-header h5 {
+            color: white;
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .scheme-card .scheme-header {
+            background: var(--card3-color) !important;  /* Using orange color for all schemes */
+        }
+
+        .scheme-card .card-body {
+            padding: 25px;
+            background: white;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .benefits-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .benefits-list li {
+            padding: 8px 0;
+            color: #555;
+        }
+
+        .step-card {
+            border: none;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .step-card:nth-child(1) .step-number {
+            background: var(--card1-color);
+        }
+
+        .step-card:nth-child(2) .step-number {
+            background: var(--card2-color);
+        }
+
+        .step-card:nth-child(3) .step-number {
+            background: var(--card3-color);
+        }
+
+        .step-card ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .step-card ul.list-unstyled {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .step-card ul li {
+            padding: 8px 0;
+            color: #555;
+            margin-left: 20px;
+        }
+
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+        }
+
+        .card-title {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .lead {
+            color: #555;
+        }
+
+        /* Container padding for sections */
+        .container section {
+            padding: 30px;
+        }
+
+        /* List item styling */
+        .step-card ul li {
+            padding: 8px 0;
+            color: #555;
+            position: relative;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Sakhi Circle</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('routes.dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('routes.learn') }}">Learn</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link">Welcome, {{ user.username }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('routes.logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Financial Literacy Section -->
+        <section>
+            <h2 class="section-title">{{ financial_literacy.title }}</h2>
+            <p class="lead mb-4">{{ financial_literacy.description }}</p>
+            
+            <div class="row g-4">
+                {% for topic in financial_literacy.topics %}
+                <div class="col-md-4">
+                    <div class="topic-card card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ topic.title }}</h5>
+                            <p class="card-text">{{ topic.description }}</p>
+                            <div class="key-points">
+                                <h6 class="mb-3">Key Points:</h6>
+                                <ul>
+                                    {% for point in topic.key_points %}
+                                    <li>{{ point }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Government Schemes Section -->
+        <section>
+            <h2 class="section-title">{{ government_schemes.title }}</h2>
+            <p class="lead mb-4">{{ government_schemes.description }}</p>
+
+            {% for scheme in government_schemes.schemes %}
+            <div class="scheme-card">
+                <div class="scheme-header">
+                    <h5 class="mb-0">{{ scheme.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text mt-3">{{ scheme.description }}</p>
+                    <div class="row mt-3">
+                        <div class="col-md-8">
+                            <h6>Benefits:</h6>
+                            <ul class="benefits-list">
+                                {% for benefit in scheme.benefits %}
+                                <li>{{ benefit }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+
+        <!-- Bank Account Creation Section -->
+        <section>
+            <h2 class="section-title">{{ bank_account.title }}</h2>
+            <p class="lead mb-4">{{ bank_account.description }}</p>
+
+            <div class="row g-4">
+                {% for step in bank_account.steps %}
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="card-body">
+                            <div class="step-number">{{ loop.index }}</div>
+                            <h5 class="card-title mb-3">{{ step.title }}</h5>
+                            <ul>
+                                {% for detail in step.details %}
+                                <li>{{ detail }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

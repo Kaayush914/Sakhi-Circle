@@ -832,6 +832,127 @@ def make_payment():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@routes.route('/learn')
+@login_required
+def learn():
+    user = get_current_user()
+    if not user:
+        return redirect(url_for('routes.login'))
+
+    financial_literacy = {
+        'title': 'Financial Literacy',
+        'description': 'Understanding the basics of money management',
+        'topics': [
+            {
+                'title': 'Budgeting Basics',
+                'description': 'Learn how to create and maintain a monthly budget',
+                'key_points': [
+                    'Track your income and expenses',
+                    'Set financial goals',
+                    'Create an emergency fund',
+                    'Reduce unnecessary expenses'
+                ]
+            },
+            {
+                'title': 'Smart Saving Strategies',
+                'description': 'Effective ways to save money and grow your wealth',
+                'key_points': [
+                    'Start saving early',
+                    'Set up automatic savings',
+                    'Choose the right savings account',
+                    'Understand compound interest'
+                ]
+            },
+            {
+                'title': 'Investment Fundamentals',
+                'description': 'Basic concepts of investing for long-term growth',
+                'key_points': [
+                    'Different types of investments',
+                    'Risk and return relationship',
+                    'Diversification importance',
+                    'Long-term investment strategies'
+                ]
+            }
+        ]
+    }
+    
+    government_schemes = {
+        'title': 'Government Schemes',
+        'description': 'Financial assistance programs and benefits',
+        'schemes': [
+            {
+                'name': 'Pradhan Mantri Jan Dhan Yojana (PMJDY)',
+                'description': 'National mission for financial inclusion providing access to financial services',
+                'benefits': [
+                    'Zero balance savings account',
+                    'RuPay debit card',
+                    'Accident insurance cover',
+                    'Overdraft facility'
+                ]
+            },
+            {
+                'name': 'Sukanya Samriddhi Yojana',
+                'description': 'Government savings scheme for girl child education and marriage expenses',
+                'benefits': [
+                    'Higher interest rates',
+                    'Tax benefits under section 80C',
+                    'Partial withdrawal for education',
+                    'Long-term savings plan'
+                ]
+            },
+            {
+                'name': 'Atal Pension Yojana',
+                'description': 'Pension scheme for unorganized sector workers',
+                'benefits': [
+                    'Guaranteed pension after 60 years',
+                    'Low premium amounts',
+                    'Government co-contribution',
+                    'Multiple pension options'
+                ]
+            }
+        ]
+    }
+    
+    bank_account = {
+        'title': 'Bank Account Creation',
+        'description': 'Step-by-step guide to opening a bank account',
+        'steps': [
+            {
+                'title': 'Choose Account Type',
+                'details': [
+                    'Savings Account - For personal savings and daily transactions',
+                    'Current Account - For business purposes',
+                    'Fixed Deposit - For long-term savings with higher interest',
+                    'Recurring Deposit - For regular monthly savings'
+                ]
+            },
+            {
+                'title': 'Required Documents',
+                'details': [
+                    'Identity Proof (Aadhaar, PAN, Voter ID)',
+                    'Address Proof (Utility bills, Passport)',
+                    'Passport size photographs',
+                    'PAN card or Form 60'
+                ]
+            },
+            {
+                'title': 'Account Opening Process',
+                'details': [
+                    'Visit nearest bank branch or apply online',
+                    'Fill account opening form',
+                    'Submit required documents',
+                    'Initial deposit (if required)'
+                ]
+            }
+        ]
+    }
+    
+    return render_template('learn.html', 
+                         financial_literacy=financial_literacy,
+                         government_schemes=government_schemes,
+                         bank_account=bank_account,
+                         user=user)
+
 # Template context processor to get payment status
 @routes.app_template_global()
 def get_payment_status(chitfund_id, round_number, user_id):
