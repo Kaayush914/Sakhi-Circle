@@ -154,22 +154,30 @@ def dashboard():
                 
                 # Check if user can bid
                 if current_round.status == 'bidding' and payment and payment.status == 'completed':
-                    # Check if user has already bid
-                    existing_bid = Bid.query.filter_by(
-                        chitfund_id=fund.id,
-                        round_id=current_round.id,
-                        user_id=user.id
-                    ).first()
-                    
-                    # Check if user has already won a round
-                    previous_wins = Round.query.filter_by(
-                        chitfund_id=fund.id,
-                        winner_id=user.id,
-                        status='completed'
-                    ).count()
-                    
-                    # User can bid if they haven't bid in this round and haven't won before
-                    can_bid = not existing_bid and previous_wins == 0
+                    # Check if all users have made their payments
+                    total_members = fund.member_count
+                    completed_payments_count = len(completed_payments)
+                    all_payments_made = total_members == completed_payments_count
+
+                    if not all_payments_made:
+                        can_bid = False
+                    else:
+                        # Check if user has already bid
+                        existing_bid = Bid.query.filter_by(
+                            chitfund_id=fund.id,
+                            round_id=current_round.id,
+                            user_id=user.id
+                        ).first()
+                        
+                        # Check if user has already won a round
+                        previous_wins = Round.query.filter_by(
+                            chitfund_id=fund.id,
+                            winner_id=user.id,
+                            status='completed'
+                        ).count()
+                        
+                        # User can bid if they haven't bid in this round and haven't won before
+                        can_bid = not existing_bid and previous_wins == 0
                 
                 # Get all bids for the current round
                 current_round.bids = Bid.query.filter_by(
@@ -482,10 +490,7 @@ def place_bid():
         ).first()
         
         if existing_bid:
-            # Delete the existing bid if it exists
-            db.session.delete(existing_bid)
-            db.session.commit()
-            print(f"Deleted existing bid for user {user_id}")
+            return jsonify({'error': 'You have already placed a bid in this round'}), 400
         
         # Create new bid
         bid = Bid(
@@ -718,85 +723,114 @@ def make_payment():
             
         chitfund_id = data.get('chitfund_id')
         round_id = data.get('round_id')
+        user_id = session.get('user_id')
         
         if not all([chitfund_id, round_id]):
             return jsonify({'error': 'Missing required fields'}), 400
-            
-        user = get_current_user()
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
-            
-        # Get the chit fund
+        
+        # Get the chitfund and round
         chitfund = ChitFund.query.get(chitfund_id)
-        if not chitfund:
-            return jsonify({'error': 'Chit fund not found'}), 404
+        current_round = Round.query.get(round_id)
+        
+        if not chitfund or not current_round:
+            return jsonify({'error': 'Invalid chitfund or round'}), 400
             
-        # Get the round
-        round = Round.query.get(round_id)
-        if not round:
-            return jsonify({'error': 'Round not found'}), 404
-            
-        # Check if payment already exists
+        if current_round.status == 'completed':
+            return jsonify({'error': 'This round is already completed'}), 400
+        
+        # Create or update payment
         payment = Payment.query.filter_by(
             chitfund_id=chitfund_id,
             round_id=round_id,
-            user_id=user.id
+            user_id=user_id
         ).first()
         
         if not payment:
-            # Create new payment
             payment = Payment(
                 chitfund_id=chitfund_id,
                 round_id=round_id,
-                user_id=user.id,
+                user_id=user_id,
                 amount=chitfund.monthly_contribution,
-                payment_method='direct',
-                transaction_id=str(uuid.uuid4()),
-                status='pending',
-                created_at=datetime.utcnow()
+                status='completed',
+                timestamp=datetime.utcnow()
             )
             db.session.add(payment)
-        
-        # Update payment status
-        payment.status = 'completed'
-        payment.payment_date = datetime.utcnow()
+        else:
+            payment.status = 'completed'
+            payment.timestamp = datetime.utcnow()
         
         db.session.commit()
-        
-        # Check if all members have paid
-        total_payments = Payment.query.filter_by(
+
+        # Check if this is the last round and all payments are complete
+        if current_round.round_number == chitfund.duration:
+            # Count completed payments for this round
+            completed_payments = Payment.query.filter_by(
+                chitfund_id=chitfund_id,
+                round_id=round_id,
+                status='completed'
+            ).count()
+
+            # Get total members in the chitfund
+            total_members = db.session.query(User).join(
+                chitfund_members
+            ).filter(
+                chitfund_members.c.chitfund_id == chitfund_id
+            ).count()
+
+            # If all members have paid in the last round
+            if completed_payments == total_members:
+                # Find the user who hasn't won yet
+                previous_winners = db.session.query(Round.winner_id).filter(
+                    Round.chitfund_id == chitfund_id,
+                    Round.status == 'completed'
+                ).all()
+                previous_winner_ids = [w[0] for w in previous_winners]
+
+                last_user = db.session.query(User).join(
+                    chitfund_members
+                ).filter(
+                    chitfund_members.c.chitfund_id == chitfund_id,
+                    ~User.id.in_(previous_winner_ids)
+                ).first()
+
+                if last_user:
+                    # Calculate total pool amount
+                    total_pool = completed_payments * chitfund.monthly_contribution
+                    
+                    # Update round with winner
+                    current_round.winner_id = last_user.id
+                    current_round.winning_bid = 0  # No bid for last round
+                    current_round.status = 'completed'
+                    current_round.dividend_per_member = 0  # No dividend in last round
+                    
+                    # Update user's savings
+                    last_user.savings = (last_user.savings or 0) + total_pool
+                    
+                    db.session.commit()
+                    
+                    return jsonify({
+                        'message': 'Payment successful and round completed automatically'
+                    })
+
+        # Check if all members have paid for regular rounds
+        total_paid = Payment.query.filter_by(
             chitfund_id=chitfund_id,
             round_id=round_id,
             status='completed'
         ).count()
         
-        response_data = {
-            'success': True,
-            'message': 'Payment completed successfully',
-            'payment': {
-                'id': payment.id,
-                'amount': payment.amount,
-                'status': payment.status,
-                'transaction_id': payment.transaction_id
-            }
-        }
-        
-        # If all members have paid, update round status
-        if total_payments == chitfund.member_count and round.status == 'upcoming':
-            round.status = 'bidding'
+        if total_paid == chitfund.member_count and current_round.round_number < chitfund.duration:
+            current_round.status = 'bidding'
             db.session.commit()
-            response_data['round_status'] = 'bidding'
         
-        return jsonify(response_data)
+        return jsonify({'message': 'Payment successful'})
         
     except Exception as e:
-        db.session.rollback()
-        print(f"Error processing payment: {str(e)}")
+        print(f"Error in make_payment: {str(e)}")
         import traceback
         traceback.print_exc()
-        return jsonify({
-            'error': 'A database error occurred while processing your payment'
-        }), 500
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 # Template context processor to get payment status
 @routes.app_template_global()
