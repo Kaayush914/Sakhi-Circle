@@ -10,36 +10,44 @@
             margin-bottom: 1rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        
         .fund-header {
             background-color: #f8f9fa;
             padding: 1rem;
             border-bottom: 1px solid #dee2e6;
         }
+        
         .fund-header h3 {
             margin-bottom: 0.25rem;
             color: #2c3e50;
         }
+        
         .fund-header small {
             color: #6c757d;
             font-size: 0.875rem;
         }
+        
         .fund-body {
             padding: 1rem;
         }
+        
         .status-badge {
             font-size: 0.875rem;
         }
+        
         .payment-form {
             margin-top: 1rem;
             padding-top: 1rem;
             border-top: 1px solid #dee2e6;
         }
+        
         .savings-card {
             background-color: #e8f5e9;
             padding: 1rem;
             margin-bottom: 1rem;
             border-radius: 0.5rem;
         }
+        
         .savings-amount {
             font-size: 1.5rem;
             font-weight: bold;
@@ -53,12 +61,46 @@
             font-size: 1.25rem;
             margin-bottom: 1rem;
         }
+        
+        .navbar {
+            background: rgba(246, 82, 160, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: white;
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">Sakhi Circle</a>
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('routes.index') }}">
+                <img src="/static/images/logo.png" alt="Sakhi Circle Logo" width="40" height="40" class="me-2">
+                <span>Sakhi Circle</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
