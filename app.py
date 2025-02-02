@@ -5,6 +5,8 @@ from routes import routes
 from datetime import timedelta
 from dotenv import load_dotenv
 import urllib.parse
+import pymysql
+pymysql.install_as_MySQLdb()
 
 # Load environment variables
 load_dotenv()
